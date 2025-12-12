@@ -129,10 +129,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="hw3d\window.h" />
     <ClInclude Include="hw3d\windows_config.h" />
     <ClInclude Include="hw3d\windows_message_map.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="hw3d\window.cc" />
     <ClCompile Include="hw3d\windows_message_map.cc" />
     <ClCompile Include="hw3d\win_main.cc" />
   </ItemGroup>

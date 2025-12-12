@@ -21,12 +21,18 @@
     <ClInclude Include="hw3d\windows_message_map.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="hw3d\window.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="hw3d\windows_message_map.cc">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="hw3d\win_main.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="hw3d\window.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

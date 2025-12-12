@@ -1,0 +1,196 @@
+﻿#include "window.h"
+
+#include <stdexcept>
+
+// Define the static WindowClass instance
+Window::WindowClass Window::WindowClass::wndClass;
+
+Window::Window(int width, int height, const char* name) noexcept
+    : width(width), height(height) {
+  /*
+    Window construction sequence (purpose of each step):
+
+    1) Store client area size (width/height): these represent the desired
+       drawable client-area dimensions for the application logic.
+
+    2) Compute a window rectangle `wr` in screen coordinates that includes
+       window non-client areas (frame, title bar) so that after creating the
+       window the client area matches the requested `width` x `height`.
+       We choose an initial position (left/top) of 100,100 for a visible
+       starting location — this is arbitrary and can be changed later.
+
+    3) Call `AdjustWindowRect` with the chosen window style flags to expand
+       the client-area rectangle to the full window rectangle required by the
+       window manager. This ensures when we pass the computed width/height to
+       `CreateWindowEx`, the resulting client area will be `width` x
+       `height`.
+
+    4) Create the actual Win32 window with `CreateWindowEx`:
+       - `dwExStyle` (first arg): extended window styles (0 for default).
+       - `lpClassName`: the registered window class name returned by
+         `WindowClass::GetName()`.
+       - `lpWindowName`: the window title text passed in `name`.
+       - `dwStyle`: window style flags (caption, minimize box, system menu).
+       - `x`,`y`,`nWidth`,`nHeight`: position and size. We use
+         `CW_USEDEFAULT` for an OS-chosen position and the adjusted
+         `wr.right-wr.left` / `wr.bottom-wr.top` for size so the client area
+         matches the requested dimensions.
+       - `hWndParent`: `nullptr` for a top-level window.
+       - `hMenu`: `nullptr` (no menu).
+       - `hInstance`: application instance obtained from
+         `WindowClass::GetInstance()`.
+       - `lpParam`: we pass `this` so the pointer to this `Window` instance
+         is available in `WM_NCCREATE`/`WM_CREATE` via the `CREATESTRUCT`.
+
+    5) The `this` pointer passed as `lpParam` is used in the window setup
+       procedure (`HandleMsgSetup`) to associate the `HWND` with this C++
+       object (stored in `GWLP_USERDATA`) and switch the window procedure to
+       the instance message thunk. That binding allows subsequent messages to
+       be forwarded to the `Window` instance methods.
+  */
+
+  RECT wr;
+  wr.left = 100;
+  wr.right = wr.left + width;
+  wr.top = 100;
+  wr.bottom = wr.top + height;
+
+  // Expand the rectangle to include non-client area (borders, title bar)
+  AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+
+  // Create the Win32 window. `this` is passed as the creation parameter so
+  // the setup WndProc can bind the HWND to this instance.
+  hWnd = CreateWindowEx(0,                       // Optional window styles.
+                        WindowClass::GetName(),  // Registered class name
+                        name,                    // Window title
+                        WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+                        // Window style
+
+                        // Position (use OS default) and adjusted size
+                        CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left,
+                        wr.bottom - wr.top,
+
+                        nullptr,                     // Parent window
+                        nullptr,                     // Menu
+                        WindowClass::GetInstance(),  // Instance handle
+                        this  // lpParam -> pointer to this Window instance
+  );
+}
+
+Window::~Window() noexcept {
+  DestroyWindow(hWnd);
+}
+
+LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd,
+                                        UINT msg,
+                                        WPARAM wParam,
+                                        LPARAM lParam) noexcept {
+  /*
+    Setup window procedure called very early during CreateWindowEx.
+
+    Purpose: bind the freshly created HWND to the C++ `Window` instance
+    passed in as the `lpParam` argument to `CreateWindowEx`. This allows
+    subsequent window messages to be forwarded to instance methods rather
+    than handled by a global/static WndProc.
+
+    Sequence and rationale:
+    - We look for `WM_NCCREATE` because it is sent before non-client area
+      creation finishes and before most other messages. The `lParam`
+      contains a pointer to a `CREATESTRUCT` whose `lpCreateParams` is the
+      `lpParam` value that was passed to `CreateWindowEx` (we passed `this`).
+    - Extract the pointer to the `Window` instance from `CREATESTRUCT`.
+    - Store that pointer in the window's user data area via
+      `SetWindowLongPtr(..., GWLP_USERDATA, ...)`. `GWLP_USERDATA` is a
+      convenient per-HWND slot used to associate arbitrary data (like a
+      `this` pointer) with the HWND.
+    - Replace the window's WndProc with the instance thunk (`HandleMsgThunk`)
+      by calling `SetWindowLongPtr(..., GWLP_WNDPROC, ...)`. After this
+      replacement, future messages go to `HandleMsgThunk`, which reads
+      `GWLP_USERDATA` and forwards to the instance `HandleMsg` member.
+    - Finally, forward the current message to the instance handler so the
+      instance can process any creation-time messages.
+
+    Notes:
+    - Returning zero from `WM_NCCREATE` will cancel window creation; if you
+      decide creation failed, return `FALSE` to abort. In our case we
+      forward to the instance and return its result.
+    - If a message arrives before `WM_NCCREATE` (very uncommon for normal
+      CreateWindowEx usage), we fall back to `DefWindowProc`.
+  */
+  if (msg == WM_NCCREATE) {
+    const CREATESTRUCTW* const pCreate =
+        reinterpret_cast<CREATESTRUCTW*>(lParam);
+    Window* const pWnd = static_cast<Window*>(pCreate->lpCreateParams);
+
+    // store pointer to C++ object in the HWND so other procs can retrieve it
+    SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pWnd));
+
+    // switch to the normal thunk WndProc which will forward messages to the
+    // instance stored in GWLP_USERDATA
+    SetWindowLongPtr(hWnd, GWLP_WNDPROC,
+                     reinterpret_cast<LONG_PTR>(&Window::HandleMsgThunk));
+
+    // forward the create message to the instance for any per-instance handling
+    return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+  }
+
+  // fallback for messages arriving before WM_NCCREATE
+  return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+LRESULT CALLBACK Window::HandleMsgThunk(HWND hWnd,
+                                        UINT msg,
+                                        WPARAM wParam,
+                                        LPARAM lParam) noexcept {
+  // retrieve ptr to window instance
+  Window* const pWnd =
+      reinterpret_cast<Window*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+  // forward message to window instance handler
+  return pWnd->HandleMsg(hWnd, msg, wParam, lParam);
+}
+
+LRESULT Window::HandleMsg(HWND hWnd,
+                          UINT msg,
+                          WPARAM wParam,
+                          LPARAM lParam) noexcept {
+  switch (msg) {
+    // we don't want the DefProc to handle this message because
+    // we want our destructor to destroy the window, so return 0 instead of
+    // break
+    case WM_CLOSE:
+      PostQuitMessage(0);
+      return 0;
+  }
+  /************** END RAW MOUSE MESSAGES **************/
+
+  return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+Window::WindowClass::WindowClass() noexcept : hInst(GetModuleHandle(nullptr)) {
+  WNDCLASSEX wc = {};
+  wc.cbSize = sizeof(wc);
+  wc.style = CS_OWNDC;
+  wc.lpfnWndProc = Window::HandleMsgSetup;
+  wc.cbClsExtra = 0;
+  wc.cbWndExtra = 0;
+  wc.hInstance = GetInstance();
+  wc.hIcon = nullptr;
+  wc.hCursor = nullptr;
+  wc.hbrBackground = nullptr;
+  wc.lpszClassName = GetName();
+  wc.hIconSm = nullptr;
+
+  RegisterClassEx(&wc);
+}
+
+Window::WindowClass::~WindowClass() {
+  UnregisterClass(wndClassName, hInst);
+}
+
+const char* Window::WindowClass::GetName() noexcept {
+  return wndClassName;
+}
+
+HINSTANCE Window::WindowClass::GetInstance() noexcept {
+  return wndClass.hInst;
+}
