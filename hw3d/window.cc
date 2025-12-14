@@ -1,5 +1,5 @@
 ﻿#include "window.h"
-
+#include "windows_message_map.h"
 #include <stdexcept>
 
 // Define the static WindowClass instance
@@ -75,6 +75,8 @@ Window::Window(int width, int height, const char* name) noexcept
                         WindowClass::GetInstance(),  // Instance handle
                         this  // lpParam -> pointer to this Window instance
   );
+
+  ShowWindow(hWnd, SW_SHOWDEFAULT);
 }
 
 Window::~Window() noexcept {
@@ -153,6 +155,10 @@ LRESULT Window::HandleMsg(HWND hWnd,
                           UINT msg,
                           WPARAM wParam,
                           LPARAM lParam) noexcept {
+
+  // static WindowsMessageMap messageMap;
+  // OutputDebugString(messageMap(msg, lParam, wParam).c_str());
+
   switch (msg) {
     // we don't want the DefProc to handle this message because
     // we want our destructor to destroy the window, so return 0 instead of
