@@ -1,7 +1,9 @@
 ﻿#include "window.h"
-#include "windows_message_map.h"
+
 #include <stdexcept>
 
+#include "windows_message_map.h"
+namespace hw3d {
 // Define the static WindowClass instance
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -155,7 +157,6 @@ LRESULT Window::HandleMsg(HWND hWnd,
                           UINT msg,
                           WPARAM wParam,
                           LPARAM lParam) noexcept {
-
   // static WindowsMessageMap messageMap;
   // OutputDebugString(messageMap(msg, lParam, wParam).c_str());
 
@@ -200,3 +201,4 @@ const char* Window::WindowClass::GetName() noexcept {
 HINSTANCE Window::WindowClass::GetInstance() noexcept {
   return wndClass.hInst;
 }
+}  // namespace hw3d

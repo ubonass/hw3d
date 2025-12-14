@@ -8,7 +8,7 @@ LRESULT CALLBACK WindowProc(_In_ HWND hWnd,
                             _In_ UINT Msg,
                             _In_ WPARAM wParam,
                             _In_ LPARAM lParam) {
-  static WindowsMessageMap messageMap;
+  static hw3d::WindowsMessageMap messageMap;
   OutputDebugString(messageMap(Msg, lParam, wParam).c_str());
 
   switch (Msg) {
@@ -62,7 +62,7 @@ int CALLBACK WinMain(HINSTANCE hInstance,
                      int nCmdShow) {
   // MessageBox(NULL, L"Hello, World!", L"My First Windows App", MB_OK);
 
-  Window window(640, 480, "Hello");
+  hw3d::Window window(640, 480, "Hello");
 
   // ShowWindow(hwnd, SW_SHOW);
 

@@ -31,6 +31,7 @@
 
 #include "windows_config.h"
 
+namespace hw3d {
 class WindowsMessageMap {
  public:
   WindowsMessageMap() noexcept;
@@ -39,3 +40,4 @@ class WindowsMessageMap {
  private:
   std::unordered_map<DWORD, std::string> map;
 };
+}  // namespace hw3d

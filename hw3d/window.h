@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "windows_config.h"
-
+namespace hw3d {
 class Window {
  public:
   Window(int width, int height, const char* name) noexcept;
@@ -42,3 +42,4 @@ class Window {
   int height;
   HWND hWnd;
 };
+}  // namespace hw3d

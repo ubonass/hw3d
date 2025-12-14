@@ -37,9 +37,8 @@
 #define WM_UAHMEASUREMENUITEM 0x0094
 #define WM_UAHNCPAINTMENUPOPUP 0x0095
 
-#define REGISTER_MESSAGE(msg) \
-  { msg, #msg }
-
+#define REGISTER_MESSAGE(msg) {msg, #msg}
+namespace hw3d {
 WindowsMessageMap::WindowsMessageMap() noexcept
     : map({
           REGISTER_MESSAGE(WM_CREATE),
@@ -235,3 +234,5 @@ std::string WindowsMessageMap::operator()(DWORD msg,
 
   return oss.str();
 }
+
+}  // namespace hw3d
