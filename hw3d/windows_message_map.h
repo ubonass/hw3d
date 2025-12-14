@@ -38,6 +38,6 @@ class WindowsMessageMap {
   std::string operator()(DWORD msg, LPARAM lp, WPARAM wp) const noexcept;
 
  private:
-  std::unordered_map<DWORD, std::string> map;
+  std::unordered_map<DWORD, std::string> map_;
 };
 }  // namespace hw3d

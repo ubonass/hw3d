@@ -8,7 +8,7 @@ namespace hw3d {
 Window::WindowClass Window::WindowClass::wndClass;
 
 Window::Window(int width, int height, const char* name) noexcept
-    : width(width), height(height) {
+    : width_(width), height_(height) {
   /*
     Window construction sequence (purpose of each step):
 
@@ -62,7 +62,7 @@ Window::Window(int width, int height, const char* name) noexcept
 
   // Create the Win32 window. `this` is passed as the creation parameter so
   // the setup WndProc can bind the HWND to this instance.
-  hWnd = CreateWindowEx(0,                       // Optional window styles.
+  hwnd_ = CreateWindowEx(0,                       // Optional window styles.
                         WindowClass::GetName(),  // Registered class name
                         name,                    // Window title
                         WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
@@ -78,11 +78,11 @@ Window::Window(int width, int height, const char* name) noexcept
                         this  // lpParam -> pointer to this Window instance
   );
 
-  ShowWindow(hWnd, SW_SHOWDEFAULT);
+  ShowWindow(hwnd_, SW_SHOWDEFAULT);
 }
 
 Window::~Window() noexcept {
-  DestroyWindow(hWnd);
+  DestroyWindow(hwnd_);
 }
 
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd,

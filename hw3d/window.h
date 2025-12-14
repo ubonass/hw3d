@@ -38,8 +38,8 @@ class Window {
   LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 
  private:
-  int width;
-  int height;
-  HWND hWnd;
+  int width_;
+  int height_;
+  HWND hwnd_;
 };
 }  // namespace hw3d
