@@ -1,6 +1,23 @@
 ﻿#pragma once
+#include "exception.h"
 #include "windows_config.h"
+
 namespace hw3d {
+
+class WindowException : public Exception {
+ public:
+  WindowException(int line, const char* file, HRESULT r) noexcept ;
+
+  const char* what() const noexcept override;
+  const char* GetType() const noexcept;
+  static std::string TranslateErrorCode(HRESULT hr) noexcept;
+  HRESULT GetErrorCode() const noexcept;
+  std::string GetErrorString() const noexcept;
+
+ private:
+  HRESULT hr_;
+};
+
 class Window {
  public:
   Window(int width, int height, const char* name) noexcept;
@@ -42,4 +59,8 @@ class Window {
   int height_;
   HWND hwnd_;
 };
+
+// error exception helper macro
+#define HWND_EXCEPTION(hr) WindowException(__LINE__, __FILE__, hr)
+
 }  // namespace hw3d

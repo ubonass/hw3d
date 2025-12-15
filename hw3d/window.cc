@@ -1,9 +1,56 @@
 ﻿#include "window.h"
 
+#include <sstream>
 #include <stdexcept>
 
 #include "windows_message_map.h"
+
 namespace hw3d {
+
+// WindowException Stuff
+WindowException::WindowException(int line,
+                                 const char* file,
+                                 HRESULT hr) noexcept
+    : Exception(line, file), hr_(hr) {}
+
+const char* WindowException::what() const noexcept {
+  std::ostringstream oss;
+  oss << GetType() << std::endl
+      << "[Error Code] " << GetErrorCode() << std::endl
+      << "[Description] " << GetErrorString() << std::endl
+      << GetOriginString();
+  what_buffer_ = oss.str();
+  return what_buffer_.c_str();
+}
+
+const char* WindowException::GetType() const noexcept {
+  return "hw3d Window Exception";
+}
+
+std::string WindowException::TranslateErrorCode(HRESULT hr) noexcept {
+  char* pMsgBuf = nullptr;
+  DWORD nMsgLen = FormatMessage(
+      FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
+          FORMAT_MESSAGE_IGNORE_INSERTS,
+      nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+      reinterpret_cast<LPSTR>(&pMsgBuf), 0, nullptr);
+  if (nMsgLen == 0) {
+    return "Unidentified error code";
+  }
+  std::string errorString = pMsgBuf;
+  LocalFree(pMsgBuf);
+  return errorString;
+}
+
+HRESULT WindowException::GetErrorCode() const noexcept {
+  return hr_;
+}
+
+std::string WindowException::GetErrorString() const noexcept {
+  return TranslateErrorCode(hr_);
+}
+
+// Window Stuff
 // Define the static WindowClass instance
 Window::WindowClass Window::WindowClass::wndClass;
 
@@ -63,19 +110,19 @@ Window::Window(int width, int height, const char* name) noexcept
   // Create the Win32 window. `this` is passed as the creation parameter so
   // the setup WndProc can bind the HWND to this instance.
   hwnd_ = CreateWindowEx(0,                       // Optional window styles.
-                        WindowClass::GetName(),  // Registered class name
-                        name,                    // Window title
-                        WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-                        // Window style
+                         WindowClass::GetName(),  // Registered class name
+                         name,                    // Window title
+                         WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+                         // Window style
 
-                        // Position (use OS default) and adjusted size
-                        CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left,
-                        wr.bottom - wr.top,
+                         // Position (use OS default) and adjusted size
+                         CW_USEDEFAULT, CW_USEDEFAULT, wr.right - wr.left,
+                         wr.bottom - wr.top,
 
-                        nullptr,                     // Parent window
-                        nullptr,                     // Menu
-                        WindowClass::GetInstance(),  // Instance handle
-                        this  // lpParam -> pointer to this Window instance
+                         nullptr,                     // Parent window
+                         nullptr,                     // Menu
+                         WindowClass::GetInstance(),  // Instance handle
+                         this  // lpParam -> pointer to this Window instance
   );
 
   ShowWindow(hwnd_, SW_SHOWDEFAULT);
