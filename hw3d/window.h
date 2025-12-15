@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include "Keyboard.h"
 #include "exception.h"
 #include "windows_config.h"
 
@@ -24,6 +25,8 @@ class Window {
   ~Window() noexcept;
   Window(const Window&) = delete;
   Window& operator=(const Window&) = delete;
+
+  const Keyboard& kbd() const noexcept { return kbd_; }
 
  private:
   class WindowClass {
@@ -53,6 +56,9 @@ class Window {
                                          LPARAM lParam) noexcept;
 
   LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
+
+ private:
+  Keyboard kbd_;
 
  private:
   int width_;

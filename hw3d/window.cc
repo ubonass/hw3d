@@ -227,9 +227,21 @@ LRESULT Window::HandleMsg(HWND hWnd,
     case WM_CLOSE:
       PostQuitMessage(0);
       return 0;
-  }
-  /************** END RAW MOUSE MESSAGES **************/
 
+    /*********** KEYBOARD MESSAGES ***********/
+    case WM_KEYDOWN:
+      kbd_.OnKeyPressed(static_cast<unsigned char>(wParam));
+      break;
+    case WM_KEYUP:
+      kbd_.OnKeyReleased(static_cast<unsigned char>(wParam));
+      break;
+    case WM_CHAR:
+      kbd_.OnChar(static_cast<unsigned char>(wParam));
+      break;
+      /*********** END KEYBOARD MESSAGES ***********/
+  }
+
+  /************** END RAW MOUSE MESSAGES **************/
   return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 

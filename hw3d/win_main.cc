@@ -70,6 +70,11 @@ int CALLBACK WinMain(HINSTANCE hInstance,
       // TranslateMessage will post auxilliary WM_CHAR messages from key msgs
       TranslateMessage(&msg);
       DispatchMessage(&msg);
+
+      if (window.kbd().KeyIsPressed(VK_SPACE)) {
+        MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed",
+                   MB_OK | MB_ICONEXCLAMATION);
+      }
     }
 
     // check if GetMessage call itself borked
