@@ -43,7 +43,7 @@ class Keyboard {
     unsigned char code;
 
    public:
-    Event() : type(Type::Invalid), code(0u) {}
+    Event() noexcept : type(Type::Invalid), code(0u) {}
     Event(Type type, unsigned char code) noexcept : type(type), code(code) {}
     bool IsPress() const noexcept { return type == Type::Press; }
     bool IsRelease() const noexcept { return type == Type::Release; }
