@@ -235,6 +235,7 @@ LRESULT Window::HandleMsg(HWND hWnd,
 
     /*********** KEYBOARD MESSAGES ***********/
     case WM_KEYDOWN:
+    case WM_SYSKEYDOWN:
       // Only handle the key press event the first time a key is pressed,
       // preventing repeated triggers when holding down the key, unless
       // auto-repeat is enabled.
@@ -244,6 +245,7 @@ LRESULT Window::HandleMsg(HWND hWnd,
       }
       break;
     case WM_KEYUP:
+    case WM_SYSKEYUP:
       kbd_.OnKeyReleased(static_cast<unsigned char>(wParam));
       break;
     case WM_CHAR:
