@@ -15,31 +15,44 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="hw3d\windows_config.h">
+    <ClInclude Include="exception.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="hw3d\windows_message_map.h">
+    <ClInclude Include="window.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="hw3d\window.h">
+    <ClInclude Include="windows_config.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="hw3d\exception.h">
+    <ClInclude Include="windows_message_map.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="hw3d\windows_message_map.cc">
+    <ClCompile Include="exception.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="hw3d\win_main.cc">
+    <ClCompile Include="win_main.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="hw3d\window.cc">
+    <ClCompile Include="windows_message_map.cc">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="hw3d\exception.cc">
+    <ClCompile Include="window.cc">
       <Filter>源文件</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="hw3d.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="hw3d.ico">
+      <Filter>资源文件</Filter>
+    </Image>
   </ItemGroup>
 </Project>

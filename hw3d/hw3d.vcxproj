@@ -21,7 +21,7 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{86dec38e-5399-439d-8cd0-f6787fb1de1a}</ProjectGuid>
+    <ProjectGuid>{ce5ffe79-d648-45c4-8a33-0e8281bb7e58}</ProjectGuid>
     <RootNamespace>hw3d</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
@@ -104,7 +104,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,7 +118,6 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -129,16 +127,23 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="hw3d\exception.h" />
-    <ClInclude Include="hw3d\window.h" />
-    <ClInclude Include="hw3d\windows_config.h" />
-    <ClInclude Include="hw3d\windows_message_map.h" />
+    <ClInclude Include="exception.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="window.h" />
+    <ClInclude Include="windows_config.h" />
+    <ClInclude Include="windows_message_map.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="hw3d\exception.cc" />
-    <ClCompile Include="hw3d\window.cc" />
-    <ClCompile Include="hw3d\windows_message_map.cc" />
-    <ClCompile Include="hw3d\win_main.cc" />
+    <ClCompile Include="exception.cc" />
+    <ClCompile Include="window.cc" />
+    <ClCompile Include="windows_message_map.cc" />
+    <ClCompile Include="win_main.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="hw3d.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="hw3d.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
