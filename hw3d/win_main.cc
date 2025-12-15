@@ -1,8 +1,8 @@
 ﻿#include <sstream>
 
+#include "window.h"
 #include "windows_config.h"
 #include "windows_message_map.h"
-#include "window.h"
 
 LRESULT CALLBACK WindowProc(_In_ HWND hWnd,
                             _In_ UINT Msg,
@@ -62,24 +62,31 @@ int CALLBACK WinMain(HINSTANCE hInstance,
                      int nCmdShow) {
   // MessageBox(NULL, L"Hello, World!", L"My First Windows App", MB_OK);
 
-  hw3d::Window window(640, 480, "Hello");
+  try {
+    hw3d::Window window(640, 480, "Donkey Fart Box");
+    MSG msg;
+    BOOL gResult;
+    while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
+      // TranslateMessage will post auxilliary WM_CHAR messages from key msgs
+      TranslateMessage(&msg);
+      DispatchMessage(&msg);
+    }
 
-  // ShowWindow(hwnd, SW_SHOW);
+    // check if GetMessage call itself borked
+    if (gResult == -1) {
+      return -1;
+    }
 
-  // msg loop
-
-  MSG msg;
-
-  BOOL gResult;
-
-  while ((gResult = GetMessage(&msg, nullptr, 0, 0) > 0)) {
-    TranslateMessage(&msg);
-    DispatchMessage(&msg);
-  }
-
-  if (gResult == -1) {
-    return -1;
-  } else {
+    // wParam here is the value passed to PostQuitMessage
     return msg.wParam;
+  } catch (const hw3d::Exception& e) {
+    MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
+  } catch (const std::exception& e) {
+    MessageBox(nullptr, e.what(), "Standard Exception",
+               MB_OK | MB_ICONEXCLAMATION);
+  } catch (...) {
+    MessageBox(nullptr, "No details available", "Unknown Exception",
+               MB_OK | MB_ICONEXCLAMATION);
   }
+  return -1;
 }
