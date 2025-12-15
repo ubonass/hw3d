@@ -71,9 +71,20 @@ int CALLBACK WinMain(HINSTANCE hInstance,
       TranslateMessage(&msg);
       DispatchMessage(&msg);
 
-      if (window.kbd().KeyIsPressed(VK_MENU)) {
-        MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed",
-                   MB_OK | MB_ICONEXCLAMATION);
+      // if (window.kbd.KeyIsPressed(VK_MENU)) {
+      //   MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed",
+      //              MB_OK | MB_ICONEXCLAMATION);
+      // }
+
+      // do app logic (test)
+      while (!window.mouse.IsEmpty()) {
+        const auto e = window.mouse.Read();
+        if (e.GetType() == hw3d::Mouse::Event::Type::Move) {
+          std::ostringstream oss;
+          oss << "Mouse Position: (" << e.GetPosX() << "," << e.GetPosY()
+              << ")";
+          window.SetTitle(oss.str());
+        }
       }
     }
 
