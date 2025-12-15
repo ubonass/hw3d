@@ -31,6 +31,12 @@ class Window {
   const Keyboard& kbd() const noexcept { return kbd_; }
   const Mouse& mouse() const noexcept { return mouse_; }
 
+  // Sets the window title shown in the window's title bar.
+  // The provided `title` string will be applied to the associated
+  // HWND (platform window). Call this to update the displayed title
+  // at runtime.
+  void SetTitle(const std::string& title);
+
  private:
   class WindowClass {
    public:

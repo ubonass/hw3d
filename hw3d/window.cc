@@ -110,8 +110,8 @@ Window::Window(int width, int height, const char* name)
   wr.bottom = wr.top + height;
 
   // Expand the rectangle to include non-client area (borders, title bar)
-  if (FAILED(AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
-                              FALSE))) {
+  if ((AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+                        FALSE)) == 0) {
     throw CHWND_LAST_EXCEPTION();
   }
 
@@ -143,6 +143,12 @@ Window::Window(int width, int height, const char* name)
 
 Window::~Window() noexcept {
   DestroyWindow(hwnd_);
+}
+
+void Window::SetTitle(const std::string& title) {
+  if (SetWindowText(hwnd_, title.c_str()) == 0) {
+    throw CHWND_LAST_EXCEPTION();
+  }
 }
 
 LRESULT CALLBACK Window::HandleMsgSetup(HWND hWnd,
