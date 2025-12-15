@@ -6,7 +6,7 @@ namespace hw3d {
 
 class WindowException : public Exception {
  public:
-  WindowException(int line, const char* file, HRESULT r) noexcept ;
+  WindowException(int line, const char* file, HRESULT r) noexcept;
 
   const char* what() const noexcept override;
   const char* GetType() const noexcept;
@@ -20,7 +20,7 @@ class WindowException : public Exception {
 
 class Window {
  public:
-  Window(int width, int height, const char* name) noexcept;
+  Window(int width, int height, const char* name);
   ~Window() noexcept;
   Window(const Window&) = delete;
   Window& operator=(const Window&) = delete;
@@ -61,6 +61,9 @@ class Window {
 };
 
 // error exception helper macro
-#define HWND_EXCEPTION(hr) WindowException(__LINE__, __FILE__, hr)
+#define CHWND_EXCEPTION(hr) WindowException(__LINE__, __FILE__, hr)
+
+#define CHWND_LAST_EXCEPTION() \
+  WindowException(__LINE__, __FILE__, GetLastError())
 
 }  // namespace hw3d

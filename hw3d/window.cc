@@ -29,15 +29,19 @@ const char* WindowException::GetType() const noexcept {
 
 std::string WindowException::TranslateErrorCode(HRESULT hr) noexcept {
   char* pMsgBuf = nullptr;
+  // windows will allocate memory for err string and make our pointer point to
+  // it
   DWORD nMsgLen = FormatMessage(
       FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
           FORMAT_MESSAGE_IGNORE_INSERTS,
       nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
       reinterpret_cast<LPSTR>(&pMsgBuf), 0, nullptr);
+  // 0 string length returned indicates a failure
   if (nMsgLen == 0) {
     return "Unidentified error code";
   }
   std::string errorString = pMsgBuf;
+  // free windows buffer
   LocalFree(pMsgBuf);
   return errorString;
 }
@@ -54,7 +58,7 @@ std::string WindowException::GetErrorString() const noexcept {
 // Define the static WindowClass instance
 Window::WindowClass Window::WindowClass::wndClass;
 
-Window::Window(int width, int height, const char* name) noexcept
+Window::Window(int width, int height, const char* name)
     : width_(width), height_(height) {
   /*
     Window construction sequence (purpose of each step):
@@ -105,7 +109,10 @@ Window::Window(int width, int height, const char* name) noexcept
   wr.bottom = wr.top + height;
 
   // Expand the rectangle to include non-client area (borders, title bar)
-  AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU, FALSE);
+  if (FAILED(AdjustWindowRect(&wr, WS_CAPTION | WS_MINIMIZEBOX | WS_SYSMENU,
+                              FALSE))) {
+    throw CHWND_LAST_EXCEPTION();
+  }
 
   // Create the Win32 window. `this` is passed as the creation parameter so
   // the setup WndProc can bind the HWND to this instance.
@@ -124,6 +131,11 @@ Window::Window(int width, int height, const char* name) noexcept
                          WindowClass::GetInstance(),  // Instance handle
                          this  // lpParam -> pointer to this Window instance
   );
+
+  // check for error
+  if (hwnd_ == nullptr) {
+    throw CHWND_LAST_EXCEPTION();
+  }
 
   ShowWindow(hwnd_, SW_SHOWDEFAULT);
 }
