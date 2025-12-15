@@ -228,6 +228,11 @@ LRESULT Window::HandleMsg(HWND hWnd,
       PostQuitMessage(0);
       return 0;
 
+    // clear keystate when window loses focus to prevent input getting "stuck"
+    case WM_KILLFOCUS:
+      kbd_.ClearState();
+      break;
+
     /*********** KEYBOARD MESSAGES ***********/
     case WM_KEYDOWN:
       kbd_.OnKeyPressed(static_cast<unsigned char>(wParam));
