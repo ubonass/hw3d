@@ -43,6 +43,8 @@ class Mouse {
       WheelUp,
       WheelDown,
       Move,
+      Enter,
+      Leave,
       Invalid
     };
 
@@ -82,6 +84,7 @@ class Mouse {
   std::pair<int, int> GetPos() const noexcept;
   int GetPosX() const noexcept;
   int GetPosY() const noexcept;
+  bool IsInWindow() const noexcept;
   bool LeftIsPressed() const noexcept;
   bool RightIsPressed() const noexcept;
   Mouse::Event Read() noexcept;
@@ -90,6 +93,8 @@ class Mouse {
 
  private:
   void OnMouseMove(int x, int y) noexcept;
+  void OnMouseLeave() noexcept;
+  void OnMouseEnter() noexcept;
   void OnLeftPressed(int x, int y) noexcept;
   void OnLeftReleased(int x, int y) noexcept;
   void OnRightPressed(int x, int y) noexcept;
@@ -104,6 +109,7 @@ class Mouse {
   int y;
   bool left_is_pressed_ = false;
   bool right_is_pressed_ = false;
+  bool is_in_window_ = false;
   std::queue<Event> buffer_;
 };
 }  // namespace hw3d

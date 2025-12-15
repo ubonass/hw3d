@@ -262,11 +262,33 @@ LRESULT Window::HandleMsg(HWND hWnd,
       /************* MOUSE MESSAGES ****************/
     case WM_MOUSEMOVE: {
       const POINTS pt = MAKEPOINTS(lParam);
-      mouse_.OnMouseMove(pt.x, pt.y);
+      // in client region -> log move, and log enter + capture mouse (if not
+      // previously in window)
+      if (pt.x >= 0 && pt.x < width_ && pt.y >= 0 && pt.y < height_) {
+        mouse_.OnMouseMove(pt.x, pt.y);
+        if (!mouse_.IsInWindow()) {
+          // capture mouse (prevent loss of capture to other windows)
+          SetCapture(hwnd_);
+          mouse_.OnMouseEnter();
+        }
+      } else {  // not in client region -> log move / maintain capture if button down
+        if (wParam & (MK_LBUTTON | MK_RBUTTON)) {
+          mouse_.OnMouseMove(pt.x, pt.y);
+        } else {  // button up -> release capture / log event for leaving
+          ReleaseCapture();
+          mouse_.OnMouseLeave();
+        }
+      }
+      break;
     }
     case WM_LBUTTONDOWN: {
       const POINTS pt = MAKEPOINTS(lParam);
       mouse_.OnLeftPressed(pt.x, pt.y);
+      // release mouse if outside of window
+      if (pt.x < 0 || pt.x >= width_ || pt.y < 0 || pt.y >= height_) {
+        ReleaseCapture();
+        mouse_.OnMouseLeave();
+      }
       break;
     }
     case WM_RBUTTONDOWN: {
@@ -282,6 +304,12 @@ LRESULT Window::HandleMsg(HWND hWnd,
     case WM_RBUTTONUP: {
       const POINTS pt = MAKEPOINTS(lParam);
       mouse_.OnRightReleased(pt.x, pt.y);
+      // release mouse if outside of window
+      if (pt.x < 0 || pt.x >= width_ || pt.y < 0 || pt.y >= height_) {
+        ReleaseCapture();
+        mouse_.OnMouseLeave();
+      }
+
       break;
     }
     case WM_MOUSEWHEEL: {
