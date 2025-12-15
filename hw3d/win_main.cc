@@ -77,15 +77,15 @@ int CALLBACK WinMain(HINSTANCE hInstance,
       // }
 
       // do app logic (test)
-      while (!window.mouse.IsEmpty()) {
-        const auto e = window.mouse.Read();
-        if (e.GetType() == hw3d::Mouse::Event::Type::Move) {
-          std::ostringstream oss;
-          oss << "Mouse Position: (" << e.GetPosX() << "," << e.GetPosY()
-              << ")";
-          window.SetTitle(oss.str());
-        }
-      }
+      // while (!window.mouse.IsEmpty()) {
+      //   const auto e = window.mouse.Read();
+      //   if (e.GetType() == hw3d::Mouse::Event::Type::Move) {
+      //     std::ostringstream oss;
+      //     oss << "Mouse Position: (" << e.GetPosX() << "," << e.GetPosY()
+      //         << ")";
+      //     window.SetTitle(oss.str());
+      //   }
+      // }
     }
 
     // check if GetMessage call itself borked
