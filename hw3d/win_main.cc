@@ -71,7 +71,7 @@ int CALLBACK WinMain(HINSTANCE hInstance,
       TranslateMessage(&msg);
       DispatchMessage(&msg);
 
-      if (window.kbd().KeyIsPressed(VK_SPACE)) {
+      if (window.kbd().KeyIsPressed(VK_MENU)) {
         MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed",
                    MB_OK | MB_ICONEXCLAMATION);
       }
