@@ -28,6 +28,9 @@ class Window {
   Window(const Window&) = delete;
   Window& operator=(const Window&) = delete;
 
+  Keyboard& kbd() noexcept { return kbd_; }
+  Mouse& mouse() noexcept { return mouse_; }
+
   // Sets the window title shown in the window's title bar.
   // The provided `title` string will be applied to the associated
   // HWND (platform window). Call this to update the displayed title
@@ -63,9 +66,9 @@ class Window {
 
   LRESULT HandleMsg(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam) noexcept;
 
- public:
-  Keyboard kbd;
-  Mouse mouse;
+ private:
+  Keyboard kbd_;
+  Mouse mouse_;
 
  private:
   int width_;
