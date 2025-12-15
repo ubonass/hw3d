@@ -33,6 +33,9 @@
     <ClInclude Include="keyboard.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="mouse.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="exception.cc">
@@ -48,6 +51,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="keyboard.cc">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="mouse.cc">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

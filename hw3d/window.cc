@@ -252,6 +252,42 @@ LRESULT Window::HandleMsg(HWND hWnd,
       kbd_.OnChar(static_cast<unsigned char>(wParam));
       break;
       /*********** END KEYBOARD MESSAGES ***********/
+
+      /************* MOUSE MESSAGES ****************/
+    case WM_MOUSEMOVE: {
+      POINTS pt = MAKEPOINTS(lParam);
+      mouse_.OnMouseMove(pt.x, pt.y);
+    }
+    case WM_LBUTTONDOWN: {
+      const POINTS pt = MAKEPOINTS(lParam);
+      mouse_.OnLeftPressed(pt.x, pt.y);
+      break;
+    }
+    case WM_RBUTTONDOWN: {
+      const POINTS pt = MAKEPOINTS(lParam);
+      mouse_.OnRightPressed(pt.x, pt.y);
+      break;
+    }
+    case WM_LBUTTONUP: {
+      const POINTS pt = MAKEPOINTS(lParam);
+      mouse_.OnLeftReleased(pt.x, pt.y);
+      break;
+    }
+    case WM_RBUTTONUP: {
+      const POINTS pt = MAKEPOINTS(lParam);
+      mouse_.OnRightReleased(pt.x, pt.y);
+      break;
+    }
+    case WM_MOUSEWHEEL: {
+      const POINTS pt = MAKEPOINTS(lParam);
+      if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) {
+        mouse_.OnWheelUp(pt.x, pt.y);
+      } else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
+        mouse_.OnWheelDown(pt.x, pt.y);
+      }
+      break;
+    }
+      /************** END MOUSE MESSAGES **************/
   }
 
   /************** END RAW MOUSE MESSAGES **************/

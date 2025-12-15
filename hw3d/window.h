@@ -1,6 +1,8 @@
 ﻿#pragma once
-#include "Keyboard.h"
+
 #include "exception.h"
+#include "keyboard.h"
+#include "mouse.h"
 #include "windows_config.h"
 
 namespace hw3d {
@@ -27,6 +29,7 @@ class Window {
   Window& operator=(const Window&) = delete;
 
   const Keyboard& kbd() const noexcept { return kbd_; }
+  const Mouse& mouse() const noexcept { return mouse_; }
 
  private:
   class WindowClass {
@@ -59,6 +62,7 @@ class Window {
 
  private:
   Keyboard kbd_;
+  Mouse mouse_;
 
  private:
   int width_;
