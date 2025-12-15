@@ -86,22 +86,6 @@ int CALLBACK WinMain(HINSTANCE hInstance,
       //     window.SetTitle(oss.str());
       //   }
       // }
-
-      // test code
-      while (!window.mouse().IsEmpty()) {
-        const auto e = window.mouse().Read();
-        switch (e.GetType()) {
-          case hw3d::Mouse::Event::Type::Leave:
-            window.SetTitle("Gone!");
-            break;
-          case hw3d::Mouse::Event::Type::Move: {
-            std::ostringstream oss;
-            oss << "Mouse moved to (" << e.GetPosX() << "," << e.GetPosY()
-                << ")";
-            window.SetTitle(oss.str());
-          } break;
-        }
-      }
     }
 
     // check if GetMessage call itself borked
