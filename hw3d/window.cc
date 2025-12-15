@@ -261,7 +261,7 @@ LRESULT Window::HandleMsg(HWND hWnd,
 
       /************* MOUSE MESSAGES ****************/
     case WM_MOUSEMOVE: {
-      POINTS pt = MAKEPOINTS(lParam);
+      const pt = MAKEPOINTS(lParam);
       mouse.OnMouseMove(pt.x, pt.y);
     }
     case WM_LBUTTONDOWN: {
