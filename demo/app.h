@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "Window.h"
-#include "Timer.h"
+#include "hw3d/window.h"
+#include "hw3d/timer.h"
+
 class App {
  public:
   App();

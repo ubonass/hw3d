@@ -2,8 +2,12 @@
 
 #include <iomanip>
 #include <sstream>
+// use embedded resource id
+#include "resource.h"
 
-App::App() : wnd_(800, 600, "The Donkey Fart Box") {}
+App::App() : wnd_(800, 600, "The Donkey Fart Box") {
+  wnd_.SetIconFromResource(IDI_HW3D);
+}
 
 int App::Loop() {
   while (true) {

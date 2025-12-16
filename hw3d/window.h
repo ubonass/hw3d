@@ -1,12 +1,12 @@
 ﻿#pragma once
 
 #include <optional>
+#include <string>
 
 #include "exception.h"
 #include "keyboard.h"
 #include "mouse.h"
 #include "windows_config.h"
-
 
 namespace hw3d {
 
@@ -39,9 +39,19 @@ class Window {
   // HWND (platform window). Call this to update the displayed title
   // at runtime.
   void SetTitle(const std::string& title);
+  // Load an icon from an external .ico file (multibyte string path) and set
+  // it as the window's large and small icon. Throws `WindowException` on
+  // failure.
+  void SetIconFromFile(const std::string& path,
+                       int width = 32,
+                       int height = 32);
+
+  void SetIconFromResource(int resourceID,
+                       int width = 32,
+                       int height = 32);
 
   static std::optional<int> ProcessMessages();
-  
+
  private:
   class WindowClass {
    public:

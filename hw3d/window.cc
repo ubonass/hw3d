@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "resource.h"
+#include "string_utils.h"
 #include "windows_message_map.h"
 
 namespace hw3d {
@@ -150,6 +151,84 @@ void Window::SetTitle(const std::string& title) {
     throw CHWND_LAST_EXCEPTION();
   }
 }
+
+void Window::SetIconFromFile(const std::string& path, int width, int height) {
+  // Convert multibyte path to wide string using helper
+  std::wstring wpath = MultiByteToWide(path, CP_UTF8);
+
+  // Load icon from file. Use LR_LOADFROMFILE so LoadImage reads from disk.
+  HICON hNew =
+      static_cast<HICON>(LoadImageW(nullptr, wpath.c_str(), IMAGE_ICON, width,
+                                    height, LR_LOADFROMFILE | LR_DEFAULTSIZE));
+  if (hNew == nullptr) {
+    throw CHWND_LAST_EXCEPTION();
+  }
+
+  // Replace big icon
+  HICON hOld = reinterpret_cast<HICON>(
+      SendMessage(hwnd_, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hNew)));
+  if (hOld) {
+    DestroyIcon(hOld);
+  }
+
+  // Replace small icon
+  hOld = reinterpret_cast<HICON>(SendMessage(hwnd_, WM_SETICON, ICON_SMALL,
+                                             reinterpret_cast<LPARAM>(hNew)));
+  if (hOld) {
+    DestroyIcon(hOld);
+  }
+}
+
+void Window::SetIconFromResource(int resourceID, int width, int height) {
+  HMODULE hMod = GetModuleHandle(nullptr);
+  if (!hMod) {
+    throw CHWND_LAST_EXCEPTION();
+  }
+
+  HICON hNew = static_cast<HICON>(LoadImageW(hMod, MAKEINTRESOURCEW(resourceID),
+                                             IMAGE_ICON, width, height,
+                                             LR_DEFAULTCOLOR));
+  if (hNew == nullptr) {
+    throw CHWND_LAST_EXCEPTION();
+  }
+
+  HICON hOld = reinterpret_cast<HICON>(
+      SendMessage(hwnd_, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hNew)));
+  if (hOld) {
+    DestroyIcon(hOld);
+  }
+
+  hOld = reinterpret_cast<HICON>(SendMessage(hwnd_, WM_SETICON, ICON_SMALL,
+                                             reinterpret_cast<LPARAM>(hNew)));
+  if (hOld) {
+    DestroyIcon(hOld);
+  }
+}
+
+#if 0
+void Window::SetIconFromResource(int resourceID, int width, int height) {
+  HICON hNew = static_cast<HICON>(
+      LoadImage(WindowClass::GetInstance(), MAKEINTRESOURCE(resourceID),
+                IMAGE_ICON, width, height, LR_DEFAULTSIZE));
+  if (hNew == nullptr) {
+    throw CHWND_LAST_EXCEPTION();
+  }
+
+  // Replace big icon
+  HICON hOld = reinterpret_cast<HICON>(
+      SendMessage(hwnd_, WM_SETICON, ICON_BIG, reinterpret_cast<LPARAM>(hNew)));
+  if (hOld) {
+    DestroyIcon(hOld);
+  }
+
+  // Replace small icon
+  hOld = reinterpret_cast<HICON>(SendMessage(hwnd_, WM_SETICON, ICON_SMALL,
+                                             reinterpret_cast<LPARAM>(hNew)));
+  if (hOld) {
+    DestroyIcon(hOld);
+  }
+}
+#endif
 
 std::optional<int> Window::ProcessMessages() {
   MSG msg;

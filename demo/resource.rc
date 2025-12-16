@@ -1,0 +1,3 @@
+#include "resource.h"
+
+IDI_HW3D ICON "hw3d.ico"
