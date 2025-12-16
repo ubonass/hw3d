@@ -63,7 +63,7 @@ int CALLBACK WinMain(HINSTANCE hInstance,
   // MessageBox(NULL, L"Hello, World!", L"My First Windows App", MB_OK);
 
   try {
-    hw3d::Window window(640, 480, "Donkey Fart Box");
+    hw3d::Window wnd(640, 480, "Donkey Fart Box");
     MSG msg;
     BOOL gResult;
     while ((gResult = GetMessage(&msg, nullptr, 0, 0)) > 0) {
@@ -71,21 +71,45 @@ int CALLBACK WinMain(HINSTANCE hInstance,
       TranslateMessage(&msg);
       DispatchMessage(&msg);
 
-      // if (window.kbd().KeyIsPressed(VK_MENU)) {
+      // if (wnd.kbd().KeyIsPressed(VK_MENU)) {
       //   MessageBox(nullptr, "Something Happon!", "Space Key Was Pressed",
       //              MB_OK | MB_ICONEXCLAMATION);
       // }
 
       // do app logic (test)
-      // while (!window.mouse().IsEmpty()) {
-      //   const auto e = window.mouse().Read();
+      // while (!wnd.mouse().IsEmpty()) {
+      //   const auto e = wnd.mouse().Read();
       //   if (e.GetType() == hw3d::Mouse::Event::Type::Move) {
       //     std::ostringstream oss;
       //     oss << "Mouse Position: (" << e.GetPosX() << "," << e.GetPosY()
       //         << ")";
-      //     window.SetTitle(oss.str());
+      //     wnd.SetTitle(oss.str());
       //   }
       // }
+
+      // test code
+      static int i = 0;
+      while (!wnd.mouse().IsEmpty()) {
+        const auto e = wnd.mouse().Read();
+        switch (e.GetType()) {
+          case hw3d::Mouse::Event::Type::WheelUp:
+            i++;
+            {
+              std::ostringstream oss;
+              oss << "Up: " << i;
+              wnd.SetTitle(oss.str());
+            }
+            break;
+          case hw3d::Mouse::Event::Type::WheelDown:
+            i--;
+            {
+              std::ostringstream oss;
+              oss << "Down: " << i;
+              wnd.SetTitle(oss.str());
+            }
+            break;
+        }
+      }
     }
 
     // check if GetMessage call itself borked
