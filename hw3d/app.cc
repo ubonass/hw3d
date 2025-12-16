@@ -1,6 +1,8 @@
 ﻿#include "App.h"
+#include <sstream>
+#include <iomanip>
 
-App::App() : wnd(800, 600, "The Donkey Fart Box") {}
+App::App() : wnd_(800, 600, "The Donkey Fart Box") {}
 
 int App::Loop() {
   MSG msg;
@@ -22,4 +24,9 @@ int App::Loop() {
   return msg.wParam;
 }
 
-void App::DoFrame() {}
+void App::DoFrame() {
+  const float t = timer_.Peek();
+  std::ostringstream oss;
+  oss << "Time elapsed: " << std::setprecision(1) << std::fixed << t << "s";
+  wnd_.SetTitle(oss.str());
+}

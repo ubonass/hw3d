@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "Window.h"
-
+#include "Timer.h"
 class App {
  public:
   App();
@@ -11,5 +11,6 @@ class App {
   void DoFrame();
 
  private:
-  hw3d::Window wnd;
+  hw3d::Window wnd_;
+  hw3d::Timer timer_;
 };
