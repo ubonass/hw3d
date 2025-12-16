@@ -127,6 +127,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="app.h" />
     <ClInclude Include="exception.h" />
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
@@ -136,6 +137,7 @@
     <ClInclude Include="windows_message_map.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="app.cc" />
     <ClCompile Include="exception.cc" />
     <ClCompile Include="keyboard.cc" />
     <ClCompile Include="mouse.cc" />
