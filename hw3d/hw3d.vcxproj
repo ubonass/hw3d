@@ -132,6 +132,7 @@
     <ClInclude Include="keyboard.h" />
     <ClInclude Include="mouse.h" />
     <ClInclude Include="resource.h" />
+    <ClInclude Include="timer.h" />
     <ClInclude Include="window.h" />
     <ClInclude Include="windows_config.h" />
     <ClInclude Include="windows_message_map.h" />
@@ -141,6 +142,7 @@
     <ClCompile Include="exception.cc" />
     <ClCompile Include="keyboard.cc" />
     <ClCompile Include="mouse.cc" />
+    <ClCompile Include="timer.cc" />
     <ClCompile Include="window.cc" />
     <ClCompile Include="windows_message_map.cc" />
     <ClCompile Include="win_main.cc" />
