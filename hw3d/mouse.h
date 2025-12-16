@@ -102,6 +102,7 @@ class Mouse {
   void OnWheelUp(int x, int y) noexcept;
   void OnWheelDown(int x, int y) noexcept;
   void TrimBuffer() noexcept;
+  void OnWheelDelta(int x, int y, int delta) noexcept;
 
  private:
   static constexpr unsigned int bufferSize = 16u;
@@ -110,6 +111,7 @@ class Mouse {
   bool left_is_pressed_ = false;
   bool right_is_pressed_ = false;
   bool is_in_window_ = false;
+  int wheel_delta_carry_ = 0;
   std::queue<Event> buffer_;
 };
 }  // namespace hw3d

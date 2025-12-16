@@ -27,6 +27,8 @@
  ******************************************************************************************/
 #include "mouse.h"
 
+#include <windows.h>
+
 namespace hw3d {
 
 std::pair<int, int> Mouse::GetPos() const noexcept {
@@ -128,6 +130,19 @@ void Mouse::OnWheelDown(int x, int y) noexcept {
 void Mouse::TrimBuffer() noexcept {
   while (buffer_.size() > bufferSize) {
     buffer_.pop();
+  }
+}
+
+void Mouse::OnWheelDelta(int x, int y, int delta) noexcept {
+  wheel_delta_carry_ += delta;
+  // generate events for every 120
+  while (wheel_delta_carry_ >= WHEEL_DELTA) {
+    wheel_delta_carry_ -= WHEEL_DELTA;
+    OnWheelUp(x, y);
+  }
+  while (wheel_delta_carry_ <= -WHEEL_DELTA) {
+    wheel_delta_carry_ += WHEEL_DELTA;
+    OnWheelDown(x, y);
   }
 }
 

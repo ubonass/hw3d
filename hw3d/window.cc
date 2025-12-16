@@ -271,7 +271,8 @@ LRESULT Window::HandleMsg(HWND hWnd,
           SetCapture(hwnd_);
           mouse_.OnMouseEnter();
         }
-      } else {  // not in client region -> log move / maintain capture if button down
+      } else {  // not in client region -> log move / maintain capture if button
+                // down
         if (wParam & (MK_LBUTTON | MK_RBUTTON)) {
           mouse_.OnMouseMove(pt.x, pt.y);
         } else {  // button up -> release capture / log event for leaving
@@ -314,11 +315,8 @@ LRESULT Window::HandleMsg(HWND hWnd,
     }
     case WM_MOUSEWHEEL: {
       const POINTS pt = MAKEPOINTS(lParam);
-      if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) {
-        mouse_.OnWheelUp(pt.x, pt.y);
-      } else if (GET_WHEEL_DELTA_WPARAM(wParam) < 0) {
-        mouse_.OnWheelDown(pt.x, pt.y);
-      }
+      const int delta = GET_WHEEL_DELTA_WPARAM(wParam);
+      mouse_.OnWheelDelta(pt.x, pt.y, delta);
       break;
     }
       /************** END MOUSE MESSAGES **************/
