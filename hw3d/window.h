@@ -1,9 +1,12 @@
 ﻿#pragma once
 
+#include <optional>
+
 #include "exception.h"
 #include "keyboard.h"
 #include "mouse.h"
 #include "windows_config.h"
+
 
 namespace hw3d {
 
@@ -37,6 +40,8 @@ class Window {
   // at runtime.
   void SetTitle(const std::string& title);
 
+  static std::optional<int> ProcessMessages();
+  
  private:
   class WindowClass {
    public:
