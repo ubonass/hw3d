@@ -263,3 +263,15 @@ __pycache__/
 *.pyc
 *.cso
 /hw3d/imgui.ini
+
+# Common build directories
+# ignore top-level and nested build folders (build, buildDebug, buildRelease, etc.)
+[Bb]uild/
+[Bb]uild*/
+build*/
+# explicit variants
+buildDebug/
+buildRelease/
+Debug/
+Release/
+release/
