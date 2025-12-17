@@ -1,9 +1,11 @@
 ﻿#pragma once
 
+#include <memory>
 #include <optional>
 #include <string>
 
 #include "exception.h"
+#include "graphics.h"
 #include "keyboard.h"
 #include "mouse.h"
 #include "windows_config.h"
@@ -33,6 +35,7 @@ class Window {
 
   Keyboard& kbd() noexcept { return kbd_; }
   Mouse& mouse() noexcept { return mouse_; }
+  Graphics& graphics() noexcept { return *graphics_; }
 
   // Sets the window title shown in the window's title bar.
   // The provided `title` string will be applied to the associated
@@ -46,9 +49,7 @@ class Window {
                        int width = 32,
                        int height = 32);
 
-  void SetIconFromResource(int resourceID,
-                       int width = 32,
-                       int height = 32);
+  void SetIconFromResource(int resourceID, int width = 32, int height = 32);
 
   static std::optional<int> ProcessMessages();
 
@@ -89,6 +90,7 @@ class Window {
   int width_;
   int height_;
   HWND hwnd_;
+  std::unique_ptr<Graphics> graphics_;
 };
 
 // error exception helper macro

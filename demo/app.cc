@@ -22,8 +22,9 @@ int App::Loop() {
 }
 
 void App::DoFrame() {
-  const float t = timer_.Peek();
-  std::ostringstream oss;
-  oss << "Time elapsed: " << std::setprecision(1) << std::fixed << t << "s";
-  wnd_.SetTitle(oss.str());
+  // const float t = timer_.Peek();
+  // std::ostringstream oss;
+  // oss << "Time elapsed: " << std::setprecision(1) << std::fixed << t << "s";
+  // wnd_.SetTitle(oss.str());
+  wnd_.graphics().EndFrame();
 }

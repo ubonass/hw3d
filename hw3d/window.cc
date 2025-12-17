@@ -140,6 +140,8 @@ Window::Window(int width, int height, const char* name)
   }
 
   ShowWindow(hwnd_, SW_SHOWDEFAULT);
+
+  graphics_ = std::make_unique<Graphics>(hwnd_);
 }
 
 Window::~Window() noexcept {
