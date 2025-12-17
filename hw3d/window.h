@@ -12,21 +12,35 @@
 
 namespace hw3d {
 
-class WindowException : public Exception {
- public:
-  WindowException(int line, const char* file, HRESULT r) noexcept;
-
-  const char* what() const noexcept override;
-  const char* GetType() const noexcept;
-  static std::string TranslateErrorCode(HRESULT hr) noexcept;
-  HRESULT GetErrorCode() const noexcept;
-  std::string GetErrorString() const noexcept;
-
- private:
-  HRESULT hr_;
-};
-
 class Window {
+ public:
+  // Exception class for window-related errors
+  class Exception : public Hw3dException {
+    using Hw3dException::Hw3dException;
+
+   public:
+    static std::string TranslateErrorCode(HRESULT hr) noexcept;
+  };
+  // Exception class for HRESULT errors
+  class HrException : public Exception {
+   public:
+    HrException(int line, const char* file, HRESULT hr) noexcept;
+    const char* what() const noexcept override;
+    const char* GetType() const noexcept override;
+    HRESULT GetErrorCode() const noexcept;
+    std::string GetErrorDescription() const noexcept;
+
+   private:
+    HRESULT hr;
+  };
+
+  // Exception class for no graphics device errors
+  class NoGfxException : public Exception {
+   public:
+    using Exception::Exception;
+    const char* GetType() const noexcept override;
+  };
+
  public:
   Window(int width, int height, const char* name);
   ~Window() noexcept;
@@ -94,9 +108,9 @@ class Window {
 };
 
 // error exception helper macro
-#define CHWND_EXCEPTION(hr) WindowException(__LINE__, __FILE__, hr)
-
+#define CHWND_EXCEPTION(hr) Window::HrException(__LINE__, __FILE__, (hr))
 #define CHWND_LAST_EXCEPTION() \
-  WindowException(__LINE__, __FILE__, GetLastError())
+  Window::HrException(__LINE__, __FILE__, GetLastError())
+#define CHWND_NOGFX_EXCEPTION() Window::NoGfxException(__LINE__, __FILE__)
 
 }  // namespace hw3d

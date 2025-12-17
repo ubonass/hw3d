@@ -9,7 +9,7 @@ int CALLBACK WinMain(HINSTANCE hInstance,
 
   try {
     return App{}.Loop();
-  } catch (const hw3d::Exception& e) {
+  } catch (const hw3d::Hw3dException& e) {
     MessageBox(nullptr, e.what(), e.GetType(), MB_OK | MB_ICONEXCLAMATION);
   } catch (const std::exception& e) {
     MessageBox(nullptr, e.what(), "Standard Exception",

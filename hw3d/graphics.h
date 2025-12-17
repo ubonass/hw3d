@@ -13,7 +13,7 @@ namespace hw3d {
 class Graphics {
  public:
   // Exception class for DirectX HRESULT errors
-  class HrException : public Exception {
+  class HrException : public Hw3dException {
    public:
     HrException(int line, const char* file, HRESULT hr) noexcept;
     const char* what() const noexcept override;

@@ -5,9 +5,9 @@
 
 namespace hw3d {
 
-class Exception : public std::exception {
+class Hw3dException : public std::exception {
  public:
-  Exception(int line, const char* file) noexcept;
+  Hw3dException(int line, const char* file) noexcept;
 
   virtual const char* what() const noexcept override;
 
@@ -20,7 +20,7 @@ class Exception : public std::exception {
   std::string GetOriginString() const noexcept;
 
  protected:
-  mutable  std::string what_buffer_;
+  mutable std::string what_buffer_;
 
  private:
   int line_;

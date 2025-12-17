@@ -13,7 +13,7 @@ namespace hw3d {
 Graphics::HrException::HrException(int line,
                                    const char* file,
                                    HRESULT hr) noexcept
-    : Exception(line, file), hr(hr) {}
+    : Hw3dException(line, file), hr(hr) {}
 
 const char* Graphics::HrException::what() const noexcept {
   std::ostringstream oss;
@@ -28,7 +28,7 @@ const char* Graphics::HrException::what() const noexcept {
 }
 
 const char* Graphics::HrException::GetType() const noexcept {
-  return "HW3D Graphics Exception";
+  return "hw3d Graphics Exception";
 }
 
 HRESULT Graphics::HrException::GetErrorCode() const noexcept {
@@ -46,7 +46,7 @@ std::string Graphics::HrException::GetErrorDescription() const noexcept {
 }
 
 const char* Graphics::DeviceRemovedException::GetType() const noexcept {
-  return "HW3D Graphics Exception [Device Removed] "
+  return "hw3d Graphics Exception [Device Removed] "
          "(DXGI_ERROR_DEVICE_REMOVED)";
 }
 

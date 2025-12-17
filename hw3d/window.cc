@@ -10,30 +10,11 @@
 namespace hw3d {
 
 // WindowException Stuff
-WindowException::WindowException(int line,
-                                 const char* file,
-                                 HRESULT hr) noexcept
-    : Exception(line, file), hr_(hr) {}
-
-const char* WindowException::what() const noexcept {
-  std::ostringstream oss;
-  oss << GetType() << std::endl
-      << "[Error Code] " << GetErrorCode() << std::endl
-      << "[Description] " << GetErrorString() << std::endl
-      << GetOriginString();
-  what_buffer_ = oss.str();
-  return what_buffer_.c_str();
-}
-
-const char* WindowException::GetType() const noexcept {
-  return "hw3d Window Exception";
-}
-
-std::string WindowException::TranslateErrorCode(HRESULT hr) noexcept {
+std::string Window::Exception::TranslateErrorCode(HRESULT hr) noexcept {
   char* pMsgBuf = nullptr;
   // windows will allocate memory for err string and make our pointer point to
   // it
-  DWORD nMsgLen = FormatMessage(
+  const DWORD nMsgLen = FormatMessage(
       FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM |
           FORMAT_MESSAGE_IGNORE_INSERTS,
       nullptr, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
@@ -48,12 +29,36 @@ std::string WindowException::TranslateErrorCode(HRESULT hr) noexcept {
   return errorString;
 }
 
-HRESULT WindowException::GetErrorCode() const noexcept {
-  return hr_;
+// WindowHrException Stuff
+Window::HrException::HrException(int line,
+                                 const char* file,
+                                 HRESULT hr) noexcept
+    : Exception(line, file), hr(hr) {}
+const char* Window::HrException::what() const noexcept {
+  std::ostringstream oss;
+  oss << GetType() << std::endl
+      << "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+      << std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+      << "[Description] " << GetErrorDescription() << std::endl
+      << GetOriginString();
+  what_buffer_ = oss.str();
+  return what_buffer_.c_str();
+}
+const char* Window::HrException::GetType() const noexcept {
+  return "hw3d Window Exception";
 }
 
-std::string WindowException::GetErrorString() const noexcept {
-  return TranslateErrorCode(hr_);
+HRESULT Window::HrException::GetErrorCode() const noexcept {
+  return hr;
+}
+
+std::string Window::HrException::GetErrorDescription() const noexcept {
+  return Exception::TranslateErrorCode(hr);
+}
+
+// WindowHrNoGfxException Stuff
+const char* Window::NoGfxException::GetType() const noexcept {
+  return "hw3d Window Exception [No Graphics]";
 }
 
 // Window Stuff
