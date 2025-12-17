@@ -1,9 +1,54 @@
 ﻿
 #include "graphics.h"
 
+#include <sstream>
+
+#include "dxerr.h"
+
 #pragma comment(lib, "d3d11.lib")
 
 namespace hw3d {
+
+// Graphics exception stuff
+Graphics::HrException::HrException(int line,
+                                   const char* file,
+                                   HRESULT hr) noexcept
+    : Exception(line, file), hr(hr) {}
+
+const char* Graphics::HrException::what() const noexcept {
+  std::ostringstream oss;
+  oss << GetType() << std::endl
+      << "[Error Code] 0x" << std::hex << std::uppercase << GetErrorCode()
+      << std::dec << " (" << (unsigned long)GetErrorCode() << ")" << std::endl
+      << "[Error String] " << GetErrorString() << std::endl
+      << "[Description] " << GetErrorDescription() << std::endl
+      << GetOriginString();
+  what_buffer_ = oss.str();
+  return what_buffer_.c_str();
+}
+
+const char* Graphics::HrException::GetType() const noexcept {
+  return "HW3D Graphics Exception";
+}
+
+HRESULT Graphics::HrException::GetErrorCode() const noexcept {
+  return hr;
+}
+
+std::string Graphics::HrException::GetErrorString() const noexcept {
+  return DXGetErrorString(hr);
+}
+
+std::string Graphics::HrException::GetErrorDescription() const noexcept {
+  char buf[512];
+  DXGetErrorDescription(hr, buf, sizeof(buf));
+  return buf;
+}
+
+const char* Graphics::DeviceRemovedException::GetType() const noexcept {
+  return "HW3D Graphics Exception [Device Removed] "
+         "(DXGI_ERROR_DEVICE_REMOVED)";
+}
 
 Graphics::Graphics(HWND hwnd) {
   DXGI_SWAP_CHAIN_DESC sd = {};
@@ -23,25 +68,30 @@ Graphics::Graphics(HWND hwnd) {
   sd.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
   sd.Flags = 0;
 
+  // for checking results of d3d functions
+  // HRESULT hr;
   // create device and front/back buffers, and swap chain and rendering context
-  D3D11CreateDeviceAndSwapChain(nullptr,                   //
-                                D3D_DRIVER_TYPE_HARDWARE,  //
-                                nullptr,                   //
-                                0,                         //
-                                nullptr,                   //
-                                0,                         //
-                                D3D11_SDK_VERSION,         //
-                                &sd,                       //
-                                &swap_chain_,              //
-                                &device_,                  //
-                                nullptr,                   //
-                                &context_);
+  GFX_THROW_FAILED(D3D11CreateDeviceAndSwapChain(nullptr,                   //
+                                                 D3D_DRIVER_TYPE_HARDWARE,  //
+                                                 nullptr,                   //
+                                                 0,                         //
+                                                 nullptr,                   //
+                                                 0,                         //
+                                                 D3D11_SDK_VERSION,         //
+                                                 &sd,                       //
+                                                 &swap_chain_,              //
+                                                 &device_,                  //
+                                                 nullptr,                   //
+                                                 &context_));
 
   // gain access to texture subresource in swap chain (back buffer)
   ID3D11Resource* pBackBuffer = nullptr;
-  swap_chain_->GetBuffer(0, __uuidof(ID3D11Resource),
-                         reinterpret_cast<void**>(&pBackBuffer));
-  device_->CreateRenderTargetView(pBackBuffer, nullptr, &target_);
+  GFX_THROW_FAILED(swap_chain_->GetBuffer(
+      0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
+
+  GFX_THROW_FAILED(
+      device_->CreateRenderTargetView(pBackBuffer, nullptr, &target_));
+
   pBackBuffer->Release();
 
   // swap_chain_->GetBuffer(0, __uuidof(ID3D11Texture2D),
@@ -68,7 +118,18 @@ Graphics::~Graphics() {
 
 void Graphics::Present() {
   // wait for vertical blanking interval before presenting
-  swap_chain_->Present(1u, 0u);
+  HRESULT hr = swap_chain_->Present(1u, 0u);
+  if (!FAILED(hr)) {
+    return;
+  }
+
+  if (hr == DXGI_ERROR_DEVICE_REMOVED) {
+    // Device was removed; throw a specific exception with the removal reason
+    throw Graphics::DeviceRemovedException(__LINE__, __FILE__,
+                                           device_->GetDeviceRemovedReason());
+  }
+  // For other failures, throw a generic HRESULT exception
+  throw Graphics::HrException(__LINE__, __FILE__, hr);
 }
 
 void Graphics::ClearBuffer(float red, float green, float blue) {

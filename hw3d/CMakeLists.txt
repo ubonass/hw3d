@@ -17,6 +17,7 @@ file(GLOB HW3D_ALL_SOURCES
   "${CMAKE_CURRENT_SOURCE_DIR}/*.cc"
   "${CMAKE_CURRENT_SOURCE_DIR}/*.c"
   "${CMAKE_CURRENT_SOURCE_DIR}/*.rc"
+  "${CMAKE_CURRENT_SOURCE_DIR}/*.inl"
 )
 
 # derive library sources (all sources in this dir)
