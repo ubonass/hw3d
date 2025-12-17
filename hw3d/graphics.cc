@@ -49,10 +49,9 @@ Graphics::Graphics(HWND hwnd) {
 }
 
 Graphics::~Graphics() {
-
   if (target_ != nullptr) {
     target_->Release();
-  } 
+  }
 
   if (context_ != nullptr) {
     context_->Release();
@@ -67,7 +66,7 @@ Graphics::~Graphics() {
   }
 }
 
-void Graphics::EndFrame() {
+void Graphics::Present() {
   // wait for vertical blanking interval before presenting
   swap_chain_->Present(1u, 0u);
 }

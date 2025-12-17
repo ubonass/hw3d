@@ -29,5 +29,5 @@ void App::DoFrame() {
 
   const float c = sin(timer_.Peek()) / 2.0f + 0.5f;
   wnd_.graphics().ClearBuffer(c, c, 1.0f);
-  wnd_.graphics().EndFrame();
+  wnd_.graphics().Present();
 }

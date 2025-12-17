@@ -1,8 +1,10 @@
 ﻿
 #pragma once
 
-#include "windows_config.h"
 #include <d3d11.h>
+
+#include "windows_config.h"
+
 
 namespace hw3d {
 
@@ -13,8 +15,7 @@ class Graphics {
   Graphics& operator=(const Graphics&) = delete;
   ~Graphics();
 
-  void EndFrame();
-
+  void Present();
   void ClearBuffer(float red, float green, float blue);
 
  private:
