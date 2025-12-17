@@ -15,10 +15,13 @@ class Graphics {
 
   void EndFrame();
 
+  void ClearBuffer(float red, float green, float blue);
+
  private:
   ID3D11Device* device_ = nullptr;
   IDXGISwapChain* swap_chain_ = nullptr;
   ID3D11DeviceContext* context_ = nullptr;
+  ID3D11RenderTargetView* target_ = nullptr;
 };
 
 }  // namespace hw3d

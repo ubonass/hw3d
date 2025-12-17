@@ -26,5 +26,8 @@ void App::DoFrame() {
   // std::ostringstream oss;
   // oss << "Time elapsed: " << std::setprecision(1) << std::fixed << t << "s";
   // wnd_.SetTitle(oss.str());
+
+  const float c = sin(timer_.Peek()) / 2.0f + 0.5f;
+  wnd_.graphics().ClearBuffer(c, c, 1.0f);
   wnd_.graphics().EndFrame();
 }
