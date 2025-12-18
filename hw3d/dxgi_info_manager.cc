@@ -7,6 +7,8 @@
 
 #pragma comment(lib, "dxguid.lib")
 
+namespace wrl = Microsoft::WRL;
+
 namespace hw3d {
 
 #define GFX_THROW_NOINFO(hrcall)                           \
@@ -41,8 +43,7 @@ DxgiInfoManager::DxgiInfoManager() {
     return;
   }
 
-  if (FAILED(DxgiGetDebugInterface(__uuidof(IDXGIInfoQueue),
-                                   reinterpret_cast<void**>(&info_queue_)))) {
+  if (FAILED(DxgiGetDebugInterface(__uuidof(IDXGIInfoQueue), &info_queue_))) {
     // couldn't get the interface - clean up and continue silently
     FreeLibrary(h_dxgi_debug_);
     h_dxgi_debug_ = nullptr;
@@ -51,9 +52,6 @@ DxgiInfoManager::DxgiInfoManager() {
 }
 
 DxgiInfoManager::~DxgiInfoManager() {
-  if (info_queue_ != nullptr) {
-    info_queue_->Release();
-  }
   if (h_dxgi_debug_ != nullptr) {
     FreeLibrary(h_dxgi_debug_);
     h_dxgi_debug_ = nullptr;

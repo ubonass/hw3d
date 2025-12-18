@@ -65,7 +65,7 @@ class Window {
 
   void SetIconFromResource(int resourceID, int width = 32, int height = 32);
 
-  static std::optional<int> ProcessMessages();
+  static std::optional<int> ProcessMessages() noexcept;
 
  private:
   class WindowClass {

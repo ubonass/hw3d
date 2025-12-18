@@ -237,7 +237,7 @@ void Window::SetIconFromResource(int resourceID, int width, int height) {
 }
 #endif
 
-std::optional<int> Window::ProcessMessages() {
+std::optional<int> Window::ProcessMessages() noexcept {
   MSG msg;
   // while queue has messages, remove and dispatch them (but do not block on
   // empty queue)

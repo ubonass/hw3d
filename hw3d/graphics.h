@@ -2,6 +2,7 @@
 #pragma once
 
 #include <d3d11.h>
+#include <wrl.h>
 
 #include <string>
 #include <vector>
@@ -53,10 +54,10 @@ class Graphics {
 #ifndef NDEBUG
   DxgiInfoManager info_manager_;
 #endif
-  ID3D11Device* device_ = nullptr;
-  IDXGISwapChain* swap_chain_ = nullptr;
-  ID3D11DeviceContext* context_ = nullptr;
-  ID3D11RenderTargetView* target_ = nullptr;
+  Microsoft::WRL::ComPtr<ID3D11Device> device_;
+  Microsoft::WRL::ComPtr<IDXGISwapChain> swap_chain_;
+  Microsoft::WRL::ComPtr<ID3D11DeviceContext> context_;
+  Microsoft::WRL::ComPtr<ID3D11RenderTargetView> target_;
 };
 
 // #define GFX_THROW_FAILED(hrcall)                           \

@@ -7,6 +7,8 @@
 
 #pragma comment(lib, "d3d11.lib")
 
+namespace wrl = Microsoft::WRL;
+
 // graphics exception checking/throwing macros (some with dxgi infos)
 #define GFX_EXCEPT_NOINFO(hr) \
   hw3d::Graphics::HrException(__LINE__, __FILE__, (hr))
@@ -149,35 +151,20 @@ Graphics::Graphics(HWND hwnd) {
                                                &context_));
 
   // gain access to texture subresource in swap chain (back buffer)
-  ID3D11Resource* pBackBuffer = nullptr;
+  wrl::ComPtr<ID3D11Resource> pBackBuffer;
   GFX_THROW_INFO(swap_chain_->GetBuffer(
-      0, __uuidof(ID3D11Resource), reinterpret_cast<void**>(&pBackBuffer)));
+      0, __uuidof(ID3D11Resource),
+      reinterpret_cast<void**>(pBackBuffer.GetAddressOf())));
 
-  GFX_THROW_INFO(
-      device_->CreateRenderTargetView(pBackBuffer, nullptr, &target_));
-
-  pBackBuffer->Release();
+  GFX_THROW_INFO(device_->CreateRenderTargetView(pBackBuffer.Get(), nullptr,
+                                                 target_.GetAddressOf()));
 
   // swap_chain_->GetBuffer(0, __uuidof(ID3D11Texture2D),
   //                        reinterpret_cast<void**>(&target_));
 }
 
 Graphics::~Graphics() {
-  if (target_ != nullptr) {
-    target_->Release();
-  }
-
-  if (context_ != nullptr) {
-    context_->Release();
-  }
-
-  if (swap_chain_ != nullptr) {
-    swap_chain_->Release();
-  }
-
-  if (device_ != nullptr) {
-    device_->Release();
-  }
+  // destructor releases com pointers automatically
 }
 
 void Graphics::Present() {
@@ -201,7 +188,7 @@ void Graphics::Present() {
 
 void Graphics::ClearBuffer(float red, float green, float blue) {
   const float color[] = {red, green, blue, 1.0f};
-  context_->ClearRenderTargetView(target_, color);
+  context_->ClearRenderTargetView(target_.Get(), color);
 }
 
 }  // namespace hw3d

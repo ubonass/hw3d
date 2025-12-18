@@ -1,11 +1,13 @@
 ﻿
 #pragma once
 #include <dxgidebug.h>
+#include <wrl.h>
 
 #include <string>
 #include <vector>
 
 #include "windows_config.h"
+
 
 namespace hw3d {
 
@@ -22,8 +24,8 @@ class DxgiInfoManager {
 
  private:
   SIZE_T next_ = 0u;
-  struct IDXGIInfoQueue* info_queue_ = nullptr;
   HMODULE h_dxgi_debug_ = nullptr;
+  Microsoft::WRL::ComPtr<IDXGIInfoQueue> info_queue_;
 };
 
 }  // namespace hw3d
