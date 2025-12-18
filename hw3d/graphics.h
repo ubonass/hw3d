@@ -4,7 +4,9 @@
 #include <d3d11.h>
 
 #include <string>
+#include <vector>
 
+#include "dxgi_Info_manager.h"
 #include "exception.h"
 #include "windows_config.h"
 
@@ -15,15 +17,20 @@ class Graphics {
   // Exception class for DirectX HRESULT errors
   class HrException : public Hw3dException {
    public:
-    HrException(int line, const char* file, HRESULT hr) noexcept;
+    HrException(int line,
+                const char* file,
+                HRESULT hr,
+                const std::vector<std::string>& infoMsgs = {}) noexcept;
     const char* what() const noexcept override;
     const char* GetType() const noexcept override;
     HRESULT GetErrorCode() const noexcept;
     std::string GetErrorString() const noexcept;
     std::string GetErrorDescription() const noexcept;
+    std::string GetErrorInfo() const noexcept;
 
    private:
     HRESULT hr;
+    std::string info;
   };
   // Exception class for device removed errors
   class DeviceRemovedException : public HrException {
@@ -43,21 +50,24 @@ class Graphics {
   void ClearBuffer(float red, float green, float blue);
 
  private:
+#ifndef NDEBUG
+  DxgiInfoManager info_manager_;
+#endif
   ID3D11Device* device_ = nullptr;
   IDXGISwapChain* swap_chain_ = nullptr;
   ID3D11DeviceContext* context_ = nullptr;
   ID3D11RenderTargetView* target_ = nullptr;
 };
 
-#define GFX_THROW_FAILED(hrcall)                           \
-  {                                                        \
-    HRESULT hr = (hrcall);                                 \
-    if (FAILED(hr)) {                                      \
-      throw Graphics::HrException(__LINE__, __FILE__, hr); \
-    }                                                      \
-  }
+// #define GFX_THROW_FAILED(hrcall)                           \
+//   {                                                        \
+//     HRESULT hr = (hrcall);                                 \
+//     if (FAILED(hr)) {                                      \
+//       throw Graphics::HrException(__LINE__, __FILE__, hr); \
+//     }                                                      \
+//   }
 
-#define GFX_DEVICE_REMOVED_EXCEPTION(hr) \
-  Graphics::DeviceRemovedException(__LINE__, __FILE__, (hr))
+// #define GFX_DEVICE_REMOVED_EXCEPTION(hr) \
+//   Graphics::DeviceRemovedException(__LINE__, __FILE__, (hr))
 
 }  // namespace hw3d
